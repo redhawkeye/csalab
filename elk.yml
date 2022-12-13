@@ -1,0 +1,37 @@
+
+version: '3.7'
+services:
+  elasticsearch:
+    image: 'docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2'
+    hostname: elasticsearch.lab
+    restart: always
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+    volumes:
+      - ./config/elk/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - elastic_data:/usr/share/elasticsearch/data
+    networks:
+      monitor:
+        ipv4_address: 10.1.0.20
+
+  kibana:
+    image: 'docker.elastic.co/kibana/kibana-oss:7.10.2'
+    hostname: kibana.lab
+    restart: always
+    environment:
+      SERVER_NAME: kibana.lab
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch.lab:9200"]'
+    networks:
+      monitor:
+        ipv4_address: 10.1.0.21
+
+networks:
+  monitor:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.1.0.0/24
+          gateway: 10.1.0.1
+
+volumes:
+  elastic_data:
