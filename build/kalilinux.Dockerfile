@@ -6,6 +6,8 @@ DEBIAN_FRONTEND=noninteractive apt -yq install \
   firefox-esr \
   inetutils-ping \
   htop \
+  nano \
+  squid \
   tigervnc-standalone-server \
   tigervnc-xorg-extension \
   tigervnc-viewer \

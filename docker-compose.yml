@@ -2,7 +2,9 @@ version: '3.7'
 services:
   kalilinux:
     hostname: kalilinux.lab
-    build: ./build/kalilinux/
+    build:
+      context: ./build/
+      dockerfile: kalilinux.Dockerfile
     image: kalilinux:web
     restart: always
     ports:
@@ -10,11 +12,12 @@ services:
     working_dir: /root
     environment:
       - SHELL=/bin/bash
-      - VNC_PASSWORD=kalilinuxlab
+      - VNC_PASSWORD=kalilinux
     volumes:
       - /dev/null:/usr/share/novnc/index.html
-      - ./script/kalilinux.startup.sh:/startup.sh
-    command: /bin/bash /startup.sh
+      - ./script/kalilinux.startup.sh:/script/startup.sh
+      - ./script/kalilinux.tunell.py:/script/tunell.py
+    command: /bin/bash /script/startup.sh
     networks:
       attack:
         ipv4_address: 10.0.0.100
@@ -24,7 +27,9 @@ services:
   phising:
     hostname: phising.lab
     image: phising:web
-    build: ./build/phising/
+    build:
+      context: ./build/
+      dockerfile: phising.Dockerfile
     restart: always
     working_dir: /root
     volumes:
@@ -42,6 +47,8 @@ services:
     networks:
       defense:
         ipv4_address: 10.0.1.10
+      monitor:
+        ipv4_address: 10.1.0.10
   
   dvwa_modsecurity:
     image: owasp/modsecurity-crs:apache
@@ -145,6 +152,8 @@ services:
     networks:
       monitor:
         ipv4_address: 10.1.0.32
+      public:
+        ipv4_address: 10.0.2.32
 
 networks:
   attack:
@@ -162,21 +171,28 @@ networks:
           gateway: 10.0.1.1
   monitor:
     driver: bridge
+    internal: true
     ipam:
       config:
         - subnet: 10.1.0.0/24
           gateway: 10.1.0.1
+  public:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.2.0/24
+          gateway: 10.0.2.1
 
 volumes:
-  filebeat_etc:
-  filebeat_var:
-  wazuh_api_configuration:
-  wazuh_etc:
-  wazuh_logs:
-  wazuh_queue:
-  wazuh_var_multigroups:
-  wazuh_integrations:
-  wazuh_active_response:
-  wazuh_agentless:
-  wazuh_wodles:
-  wazuh-indexer-data:
+  filebeat_etc: {}
+  filebeat_var: {}
+  wazuh_api_configuration: {}
+  wazuh_etc: {}
+  wazuh_logs: {}
+  wazuh_queue: {}
+  wazuh_var_multigroups: {}
+  wazuh_integrations: {}
+  wazuh_active_response: {}
+  wazuh_agentless: {}
+  wazuh_wodles: {}
+  wazuh-indexer-data: {}
