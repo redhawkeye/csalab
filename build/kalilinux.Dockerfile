@@ -7,7 +7,7 @@ DEBIAN_FRONTEND=noninteractive apt -yq install \
   inetutils-ping \
   htop \
   nano \
-  squid \
+  net-tools \
   tigervnc-standalone-server \
   tigervnc-xorg-extension \
   tigervnc-viewer \

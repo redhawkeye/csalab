@@ -8,7 +8,7 @@ services:
     image: kalilinux:web
     restart: always
     ports:
-      - 6080:80
+      - 6080:8080
     working_dir: /root
     environment:
       - SHELL=/bin/bash

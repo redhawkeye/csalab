@@ -24,9 +24,9 @@ ROUTES = [
         'route'     :b'^(GET|POST)',
         'hack'      :Hack,
     },{
-        'name'      :'SQUID',
+        'name'      :'SOCKS5',
         'addr'      :('127.0.0.1',3128),
-        'route'     :b'^\x47\x45\x54',
+        'route'     :b'^\x05',
         'hack'      :Hack,
     },{
         'name'      :'SSH',
@@ -75,18 +75,18 @@ class TcpTunnel(Thread):
             if self.srcsock not in self.SOCKS:
                 for value in ROUTES:
                     if re.search(value['route'],buff,re.IGNORECASE):
-                        sys.stdout.write('[+]Connect %s%s <--> %s\n'%(value['name'],str(value['addr']),str(self.srcaddr)))
+                        sys.stdout.write('[+] Connect %s%s <--> %s\n'%(value['name'],str(value['addr']),str(self.srcaddr)))
                         self.hack = value['hack'](self.srcaddr,value['addr'])
                         self.dstsock.connect(value['addr'])
                         break
                 self.SOCKS[self.srcsock] = self.dstsock
                 Thread(target=self.s,args=(self.dstsock,self.srcsock,)).start()
-            sys.stdout.write('[!]' + buff.encode('hex') + '[!]\n')
+            # sys.stdout.write('[!]' + buff.encode('hex') + '[!]\n')
             buff = self.hack.request(buff)
             self.dstsock.sendall(buff)
         self.dstsock.close()
-        try: sys.stdout.write('[+]DisConnect %s%s <--> %s\n'%(value['name'],str(value['addr']),str(self.srcaddr)))
-        except: sys.stdout.write('[+]DisConnect\n')
+        try: sys.stdout.write('[+] DisConnect %s%s <--> %s\n'%(value['name'],str(value['addr']),str(self.srcaddr)))
+        except: sys.stdout.write('[+] DisConnect\n')
 
 class SockProxy(object):
     def __init__(self,host='0.0.0.0',port=8080,listen=100):
